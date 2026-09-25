@@ -1,0 +1,19 @@
+{
+  "name": "fundacion-en-la-casa-de-papa",
+  "version": "1.0.0",
+  "description": "Sitio web institucional y portal oficial de Registro Web RTE DIAN para la Fundación En La Casa de Papá",
+  "main": "index.html",
+  "scripts": {
+    "start": "npx serve .",
+    "build": "echo 'Sitio estático listo para producción'"
+  },
+  "keywords": [
+    "fundacion-en-la-casa-de-papa",
+    "esal",
+    "dian",
+    "rte",
+    "registro-web"
+  ],
+  "author": "piojo1234",
+  "license": "MIT"
+}
