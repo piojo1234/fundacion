@@ -14,6 +14,9 @@ document.addEventListener('DOMContentLoaded', () => {
   initCivilSocietyForm();
   initDocPreviewModals();
   renderRadicadosLog();
+  initSemillasCalculator();
+  initFaqAccordion();
+  initSemillasPackageButtons();
 });
 
 /* ==========================================================================
@@ -572,4 +575,264 @@ function escapeHtml(string) {
   const div = document.createElement('div');
   div.innerText = string;
   return div.innerHTML;
+}
+
+/* ==========================================================================
+   LÓGICA: CALCULADORA INTERACTIVA DE SEMILLAS DE VIDA & MODAL
+   ========================================================================== */
+
+let currentDonationData = {
+  frequency: 'monthly',
+  amount: 100000,
+  dailyCost: 3333,
+  packageName: 'Semillita de Nutrición',
+  impactMeals: 30,
+  impactHours: 15,
+  impactKids: '1 niño'
+};
+
+function initSemillasCalculator() {
+  const customInput = document.getElementById('custom-amount-input');
+  const slider = document.getElementById('amount-slider');
+  const quickBtns = document.querySelectorAll('.quick-btn');
+  const freqBtns = document.querySelectorAll('.freq-btn');
+  const btnConcretar = document.getElementById('btn-concretar-aporte');
+
+  // Si no está presente en la página actual, salimos silenciosamente
+  if (!customInput && !slider && !btnConcretar) return;
+
+  function formatMoneyCOP(val) {
+    return '$' + Math.round(val).toLocaleString('es-CO');
+  }
+
+  function updateCalculations(newAmount) {
+    newAmount = Math.max(30000, Math.min(5000000, Number(newAmount) || 100000));
+    currentDonationData.amount = newAmount;
+
+    const isMonthly = currentDonationData.frequency === 'monthly';
+    const dailyCost = isMonthly ? Math.round(newAmount / 30) : newAmount;
+    currentDonationData.dailyCost = dailyCost;
+
+    // Actualizar nombre de paquete sugerido según los rangos del Lineamiento Interno
+    if (newAmount < 300000) {
+      currentDonationData.packageName = 'Semillita de Nutrición (Nivel 1)';
+    } else if (newAmount <= 500000) {
+      currentDonationData.packageName = 'Semilla de Futuro (Nivel 2)';
+    } else {
+      currentDonationData.packageName = 'Sembrador Guardián (Nivel 3)';
+    }
+
+    // Impacto estimado
+    const meals = Math.max(1, Math.round(newAmount / 3333));
+    const hours = Math.max(2, Math.round((newAmount / 100000) * 15));
+    const kids = Math.max(1, Math.floor(newAmount / 100000));
+
+    currentDonationData.impactMeals = meals;
+    currentDonationData.impactHours = hours;
+    currentDonationData.impactKids = kids === 1 ? '1 niño' : `${kids} niños`;
+
+    // Actualizar DOM
+    const dailyCostEl = document.getElementById('calc-daily-cost');
+    const compEl = document.getElementById('calc-daily-comparison');
+    const mealsEl = document.getElementById('calc-meals-count');
+    const hoursEl = document.getElementById('calc-tutoring-hours');
+    const kidsEl = document.getElementById('calc-kids-count');
+
+    if (dailyCostEl) {
+      dailyCostEl.innerHTML = `${formatMoneyCOP(dailyCost)} COP <span class="cir-period">${isMonthly ? '/ día' : 'único'}</span>`;
+    }
+
+    if (compEl) {
+      if (dailyCost <= 4000) {
+        compEl.textContent = '☕ Menos de lo que vale un café caliente y un pan de queso';
+      } else if (dailyCost <= 8000) {
+        compEl.textContent = '🥪 Menos de lo que cuesta un refrigerio o una gaseosa';
+      } else if (dailyCost <= 15000) {
+        compEl.textContent = '🍛 El equivalente a un almuerzo corriente de paso';
+      } else {
+        compEl.textContent = '🌟 Un apoyo transformador que rescata a toda una familia';
+      }
+    }
+
+    if (mealsEl) mealsEl.textContent = String(meals);
+    if (hoursEl) hoursEl.textContent = `${hours} hrs`;
+    if (kidsEl) kidsEl.textContent = currentDonationData.impactKids;
+
+    // Sincronizar input y slider
+    if (customInput && Number(customInput.value) !== newAmount) {
+      customInput.value = newAmount;
+    }
+    if (slider && Number(slider.value) !== newAmount) {
+      slider.value = newAmount;
+    }
+
+    // Actualizar botones rápidos activos
+    quickBtns.forEach(btn => {
+      if (Number(btn.dataset.val) === newAmount) {
+        btn.classList.add('active');
+      } else {
+        btn.classList.remove('active');
+      }
+    });
+  }
+
+  // Evento Input numérico
+  if (customInput) {
+    customInput.addEventListener('input', (e) => {
+      const val = Number(e.target.value);
+      if (!isNaN(val) && val > 0) {
+        updateCalculations(val);
+      }
+    });
+  }
+
+  // Evento Slider
+  if (slider) {
+    slider.addEventListener('input', (e) => {
+      updateCalculations(Number(e.target.value));
+    });
+  }
+
+  // Botones Rápidos
+  quickBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const val = Number(btn.dataset.val);
+      updateCalculations(val);
+    });
+  });
+
+  // Frecuencia
+  freqBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      freqBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      currentDonationData.frequency = btn.dataset.freq;
+      updateCalculations(currentDonationData.amount);
+    });
+  });
+
+  // Botón Concretar Aporte
+  if (btnConcretar) {
+    btnConcretar.addEventListener('click', () => {
+      openSembradorModal();
+    });
+  }
+
+  // Inicializar con valor por defecto
+  updateCalculations(100000);
+  initSembradorModalHandlers();
+}
+
+function openSembradorModal(customPackageName) {
+  const modal = document.getElementById('modal-sembrador');
+  if (!modal) return;
+
+  const pkgName = customPackageName || currentDonationData.packageName;
+  const isMonthly = currentDonationData.frequency === 'monthly';
+
+  const modalPkg = document.getElementById('modal-package-name');
+  const modalAmt = document.getElementById('modal-amount-display');
+  const modalDaily = document.getElementById('modal-daily-display');
+  const modalImpact = document.getElementById('modal-impact-display');
+  const waBtn = document.getElementById('modal-whatsapp-action');
+
+  if (modalPkg) modalPkg.textContent = pkgName;
+  if (modalAmt) modalAmt.textContent = '$' + currentDonationData.amount.toLocaleString('es-CO') + ' COP' + (isMonthly ? ' / mes' : ' (único)');
+  if (modalDaily) modalDaily.textContent = '$' + currentDonationData.dailyCost.toLocaleString('es-CO') + ' COP' + (isMonthly ? ' / día' : '');
+  if (modalImpact) modalImpact.textContent = `${currentDonationData.impactMeals} platos de comida en el comedor infantil para ${currentDonationData.impactKids}`;
+
+  // Enlace directo de WhatsApp con mensaje personalizado
+  if (waBtn) {
+    const textMsg = `Hola Fundación En La Casa de Papá, deseo unirme como *Sembrador de Vida*. Mi deseo es apoyar con el paquete *${pkgName}*, aportando *$${currentDonationData.amount.toLocaleString('es-CO')} COP* ${isMonthly ? 'mensuales' : 'en donación única'} (equivale a solo *$${currentDonationData.dailyCost.toLocaleString('es-CO')}/día*). ¿Cuáles son los números de cuenta para realizar mi aporte?`;
+    waBtn.href = `https://wa.me/573105693286?text=${encodeURIComponent(textMsg)}`;
+  }
+
+  modal.classList.add('active');
+  modal.setAttribute('aria-hidden', 'false');
+  document.body.style.overflow = 'hidden';
+}
+
+function initSembradorModalHandlers() {
+  const modal = document.getElementById('modal-sembrador');
+  const closeBtn = document.getElementById('modal-sembrador-close');
+  if (!modal) return;
+
+  function closeModal() {
+    modal.classList.remove('active');
+    modal.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+  }
+
+  if (closeBtn) {
+    closeBtn.addEventListener('click', closeModal);
+  }
+
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal) {
+      closeModal();
+    }
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && modal.classList.contains('active')) {
+      closeModal();
+    }
+  });
+}
+
+function initSemillasPackageButtons() {
+  const packageBtns = document.querySelectorAll('.select-package-btn');
+  if (!packageBtns.length) return;
+
+  packageBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const defaultAmt = Number(btn.dataset.default) || 100000;
+      const pkgName = btn.dataset.name || 'Semillita de Nutrición';
+
+      const customInput = document.getElementById('custom-amount-input');
+      const slider = document.getElementById('amount-slider');
+
+      if (customInput) customInput.value = defaultAmt;
+      if (slider) slider.value = defaultAmt;
+
+      // Disparar evento para actualizar cálculos
+      if (customInput) {
+        customInput.dispatchEvent(new Event('input'));
+      }
+
+      // Si existe el modal de Sembrador, abrirlo de inmediato
+      openSembradorModal(pkgName);
+    });
+  });
+}
+
+/* ==========================================================================
+   ACORDEÓN DE PREGUNTAS FRECUENTES (FAQ)
+   ========================================================================== */
+function initFaqAccordion() {
+  const faqQuestions = document.querySelectorAll('.faq-question');
+  if (!faqQuestions.length) return;
+
+  faqQuestions.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const isExpanded = btn.getAttribute('aria-expanded') === 'true';
+      const answer = btn.nextElementSibling;
+
+      // Cerrar otros
+      faqQuestions.forEach(otherBtn => {
+        if (otherBtn !== btn) {
+          otherBtn.setAttribute('aria-expanded', 'false');
+          if (otherBtn.nextElementSibling) {
+            otherBtn.nextElementSibling.classList.remove('show');
+          }
+        }
+      });
+
+      // Alternar actual
+      btn.setAttribute('aria-expanded', !isExpanded);
+      if (answer) {
+        answer.classList.toggle('show', !isExpanded);
+      }
+    });
+  });
 }
