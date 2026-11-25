@@ -1,0 +1,891 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
+    <!-- Privacidad: Impedir que Google o buscadores indexen esta invitación -->
+    <meta name="robots" content="noindex, nofollow, noarchive, nosnippet" />
+    <meta name="googlebot" content="noindex, nofollow, noarchive, nosnippet" />
+    
+    <!-- Metadatos SEO y Open Graph -->
+    <title>Brunch de Acción de Gracias 🥐☕ • Fundación En la Casa de Papá</title>
+    <meta name="description" content="Invitación especial al Brunch de Acción de Gracias para los Sembradores Felices de la Fundación En la Casa de Papá. Sábado 05 de Diciembre, 7:30 AM." />
+    
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Fundación En la Casa de Papá" />
+    <meta property="og:title" content="¡Estás invitado al Brunch de Acción de Gracias! 🥐☕" />
+    <meta property="og:description" content="Sábado 05 de Diciembre, 7:30 AM • Restaurante Café Lagar Bistro, Cra 31 # 38 - 109, Centro de Villavicencio. ¡Acompáñanos a dar gracias por los frutos cosechados!" />
+    <meta property="og:image" content="/brunch/images/hero-group.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:locale" content="es_CO" />
+    
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="¡Estás invitado al Brunch de Acción de Gracias! 🥐☕" />
+    <meta name="twitter:description" content="Sábado 05 de Diciembre, 7:30 AM • Restaurante Café Lagar Bistro, Villavicencio. Encuentro especial Sembrador Feliz." />
+    <meta name="twitter:image" content="/brunch/images/hero-group.jpg" />
+
+    <!-- Google Fonts: Fredoka (display cálida), Plus Jakarta Sans (lectura) y Caveat (escritura a mano) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Fredoka:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script type="module" crossorigin src="/brunch/assets/index-B9mCVWTN.js"></script>
+    <link rel="stylesheet" crossorigin href="/brunch/assets/index-Dqaeml3H.css">
+  </head>
+  
+  <body class="bg-[#FFFDF9] text-stone-800 font-sans antialiased selection:bg-sage-200 selection:text-sage-800 overflow-x-hidden min-h-screen">
+    
+    <!-- Canvas de Partículas Ambientales (60fps, destellos cálidos / semillas flotando) -->
+    <canvas id="ambient-canvas" class="fixed inset-0 pointer-events-none z-10 w-full h-full opacity-60"></canvas>
+
+    <!-- Botón Flotante de Audio -->
+    <div id="audio-control-container" class="fixed top-5 right-5 z-50 transition-all duration-300 opacity-0 pointer-events-none -translate-y-4">
+      <button 
+        id="btn-toggle-audio" 
+        class="touch-btn group relative flex items-center gap-2.5 px-4 py-2.5 rounded-full bg-white/90 backdrop-blur-md border border-stone-200/80 shadow-glass hover:shadow-lg transition-all duration-300 text-stone-700 active:scale-95"
+        aria-label="Controlar música de fondo"
+      >
+        <span class="music-note-icon text-lg">🎵</span>
+        <div class="audio-waves flex items-end gap-0.5 h-3.5">
+          <span class="wave-bar w-0.5 bg-sage-500 rounded-full h-2"></span>
+          <span class="wave-bar w-0.5 bg-sage-500 rounded-full h-3.5"></span>
+          <span class="wave-bar w-0.5 bg-sage-500 rounded-full h-1.5"></span>
+        </div>
+        <span id="audio-label" class="text-xs font-semibold tracking-wide uppercase font-sans text-stone-600">Música</span>
+      </button>
+    </div>
+
+    <!-- Notificación Toast Flotante -->
+    <div 
+      id="toast-notification" 
+      class="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 px-5 py-3 rounded-2xl bg-stone-900/90 backdrop-blur-md text-white text-xs sm:text-sm font-medium shadow-2xl transition-all duration-300 opacity-0 pointer-events-none translate-y-4 flex items-center gap-2.5 max-w-[90vw] text-center"
+      role="alert"
+    >
+      <span id="toast-message">Mensaje del toast</span>
+    </div>
+
+    <!-- ====================================================================
+         1. PANTALLA DE APERTURA (PORTAL 3D CON SOBRE / CARTA DE GRATITUD)
+         ==================================================================== -->
+    <section 
+      id="opening-screen" 
+      class="fixed inset-0 z-40 flex items-center justify-center p-4 bg-gradient-to-br from-[#FAF7F0] via-[#F3EFE6] to-[#E9DFCE] select-none overflow-hidden"
+    >
+      <!-- Hojas decorativas desenfocadas de primer plano -->
+      <div class="opening-dof-leaf absolute -top-12 -left-12 w-48 h-48 opacity-25 pointer-events-none rotate-12">
+        <svg viewBox="0 0 100 100" fill="#537B5B">
+          <path d="M10,90 Q50,95 85,50 Q60,10 10,90 Z" />
+        </svg>
+      </div>
+      <div class="opening-dof-leaf absolute -bottom-16 -right-16 w-56 h-56 opacity-25 pointer-events-none -rotate-45">
+        <svg viewBox="0 0 100 100" fill="#E9A643">
+          <path d="M90,90 Q40,95 15,50 Q40,10 90,90 Z" />
+        </svg>
+      </div>
+
+      <div id="opening-portal-wrapper" class="max-w-md w-full bg-white/85 backdrop-blur-xl border border-white/80 rounded-3xl p-6 sm:p-8 text-center shadow-2xl relative z-10 transition-transform duration-500">
+        
+        <div class="inline-block px-3.5 py-1 bg-sage-100 text-sage-800 text-xs font-bold rounded-full uppercase tracking-wider mb-3">
+          🌿 Encuentro Sembrador Feliz
+        </div>
+        
+        <h2 id="opening-greeting" class="text-2xl sm:text-3xl font-display font-bold text-stone-900 mb-1">
+          ¡Hola, Sembrador Feliz!
+        </h2>
+
+        <p class="text-xs font-semibold text-emerald-800 uppercase tracking-widest mb-3">
+          Fundación En la Casa de Papá
+        </p>
+        
+        <p class="text-stone-600 text-sm sm:text-base leading-relaxed mb-5 font-sans">
+          Queremos darte gracias de todo corazón. Toca el sobre para abrir tu invitación especial al <strong>Brunch de Acción de Gracias</strong>...
+        </p>
+
+        <!-- Sobre / Tarjeta 3D Interactiva -->
+        <div id="picnic-basket-container" class="relative w-48 h-48 sm:w-56 sm:h-56 mx-auto my-2 cursor-pointer group preserve-3d">
+          <div class="absolute inset-0 bg-amber-200/40 rounded-full blur-2xl group-hover:scale-110 transition-transform duration-500"></div>
+          
+          <svg id="picnic-basket-svg" viewBox="0 0 200 200" class="w-full h-full relative z-10 drop-shadow-basket transition-transform duration-300 preserve-3d">
+            <!-- Sello / Resplandor -->
+            <defs>
+              <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#FCD34D" />
+                <stop offset="50%" stop-color="#F59E0B" />
+                <stop offset="100%" stop-color="#D97706" />
+              </linearGradient>
+              <linearGradient id="sageGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#E2E8F0" />
+                <stop offset="100%" stop-color="#CBD5E1" />
+              </linearGradient>
+            </defs>
+
+            <!-- Cuerpo del sobre elegante -->
+            <rect x="25" y="65" width="150" height="105" rx="12" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="2"/>
+            <path d="M25,170 L85,115 L25,65" fill="#F8FAFC" stroke="#E2E8F0" stroke-width="1.5" />
+            <path d="M175,170 L115,115 L175,65" fill="#F8FAFC" stroke="#E2E8F0" stroke-width="1.5" />
+            <path d="M25,170 L100,120 L175,170 Z" fill="#F1F5F9" stroke="#CBD5E1" stroke-width="1.5" />
+
+            <!-- Solapa 3D del sobre -->
+            <g id="basket-lid" style="transform-origin: 100px 65px; transform-style: preserve-3d;">
+              <path d="M25,65 L100,120 L175,65 Z" fill="url(#goldGrad)" stroke="#B45309" stroke-width="1.5" />
+              <!-- Sello de cera con corazón de la fundación -->
+              <circle cx="100" cy="115" r="16" fill="#B45309" stroke="#78350F" stroke-width="2" />
+              <circle cx="100" cy="115" r="13" fill="#D97706" />
+              <path d="M96,113 C96,110 98,109 100,111 C102,109 104,110 104,113 C104,116 100,119 100,119 C100,119 96,116 96,113 Z" fill="#FFFFFF" />
+            </g>
+
+            <!-- Destellos dorados animados -->
+            <circle cx="45" cy="50" r="3" fill="#F59E0B" class="animate-ping opacity-75" />
+            <circle cx="155" cy="45" r="2.5" fill="#10B981" class="animate-pulse" />
+          </svg>
+        </div>
+
+        <!-- Botón Grande -->
+        <button 
+          id="btn-open-basket" 
+          class="touch-btn w-full mt-4 bg-gradient-to-r from-emerald-700 via-emerald-800 to-emerald-900 hover:from-emerald-800 hover:to-emerald-950 active:scale-98 text-white font-display font-bold text-base sm:text-lg py-4 px-6 rounded-2xl shadow-lg shadow-emerald-900/30 transition-all flex items-center justify-center gap-3 cursor-pointer"
+        >
+          <span>Abrir Invitación de Acción de Gracias</span>
+          <span class="text-xl animate-bounce">🥐✨</span>
+        </button>
+
+        <p class="text-xs text-stone-500 mt-3 font-sans">
+          Toca para descubrir los detalles del encuentro
+        </p>
+      </div>
+    </section>
+
+    <!-- ====================================================================
+         CONTENEDOR PRINCIPAL SCROLLYTELLING
+         ==================================================================== -->
+    <main id="app-container" class="relative w-full">
+
+      <!-- ==================================================================
+           2. HERO SECTION CON LOGO, FOTO GRUPAL Y PARALLAX 3D
+           ================================================================== -->
+      <section id="hero-section" class="relative min-h-screen flex items-center justify-center overflow-hidden perspective-1200 bg-gradient-to-b from-[#FFFDF9] via-[#FAF7F2] to-[#F5EFE6] pt-16 pb-14">
+        
+        <div id="hero-parallax-container" class="relative w-full h-full min-h-screen flex items-center justify-center preserve-3d">
+          
+          <!-- CAPA 1 (Fondo): Sol suave y colinas -->
+          <div class="parallax-layer absolute inset-0 pointer-events-none flex items-center justify-center" data-depth="0.1">
+            <div id="hero-sun" class="absolute top-10 -right-10 sm:top-12 sm:right-16 w-52 h-52 sm:w-72 sm:h-72 opacity-60">
+              <svg viewBox="0 0 200 200" class="w-full h-full animate-spin-very-slow text-amber-300">
+                <circle cx="100" cy="100" r="50" fill="#FEF3C7" stroke="#FBBF24" stroke-width="4"/>
+                <g stroke="#FBBF24" stroke-width="4" stroke-linecap="round">
+                  <line x1="100" y1="15" x2="100" y2="35" />
+                  <line x1="100" y1="165" x2="100" y2="185" />
+                  <line x1="15" y1="100" x2="35" y2="100" />
+                  <line x1="165" y1="100" x2="185" y2="100" />
+                  <line x1="40" y1="40" x2="55" y2="55" />
+                  <line x1="145" y1="145" x2="160" y2="160" />
+                  <line x1="40" y1="160" x2="55" y2="145" />
+                  <line x1="145" y1="55" x2="160" y2="40" />
+                </g>
+              </svg>
+            </div>
+
+            <div class="absolute bottom-0 left-0 right-0 h-48 opacity-25">
+              <svg viewBox="0 0 1200 250" class="w-full h-full object-cover text-emerald-200" fill="currentColor">
+                <path d="M0,250 C300,140 600,200 900,120 C1050,80 1150,150 1200,170 L1200,250 Z"></path>
+              </svg>
+            </div>
+          </div>
+
+          <!-- CAPA 2 (Medio): Destellos y nubes -->
+          <div class="parallax-layer absolute inset-0 pointer-events-none" data-depth="0.3">
+            <div class="absolute top-20 left-6 sm:left-20 w-36 sm:w-56 text-white/80 drop-shadow-sm">
+              <svg viewBox="0 0 100 60" fill="currentColor">
+                <path d="M10 40 A 15 15 0 0 1 30 25 A 20 20 0 0 1 70 20 A 15 15 0 0 1 90 40 A 10 10 0 0 1 80 55 L 20 55 A 10 10 0 0 1 10 40 Z" />
+              </svg>
+            </div>
+            <div id="hero-bee" class="absolute top-36 left-1/3 w-8 h-8 opacity-75">
+              <span class="text-2xl animate-float-gentle block">🌱</span>
+            </div>
+          </div>
+
+          <!-- CAPA 3 (Foco): Contenido Principal -->
+          <div class="parallax-layer relative z-20 max-w-xl mx-auto px-4 flex flex-col items-center text-center" data-depth="0.6">
+            
+            <!-- Logo de la Fundación -->
+            <div class="hero-anim-item mb-4">
+              <img 
+                src="/brunch/images/logo.png" 
+                alt="Fundación En la Casa de Papá" 
+                class="h-20 sm:h-24 w-auto object-contain mx-auto filter drop-shadow-sm" 
+              />
+            </div>
+
+            <div class="hero-anim-item inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/95 border border-sage-200 shadow-sm text-sage-800 text-xs sm:text-sm font-semibold mb-5">
+              <span class="w-2.5 h-2.5 rounded-full bg-emerald-600 animate-ping"></span>
+              <span>Encuentro de Gratitud • Sembradores Felices</span>
+            </div>
+
+            <!-- Foto Grupal con Marco Orgánico -->
+            <div class="hero-anim-item relative mb-6 group">
+              <div class="absolute -inset-6 bg-gradient-to-tr from-emerald-200 via-amber-200 to-sage-200 rounded-full blur-2xl opacity-70"></div>
+              
+              <div class="relative w-64 h-80 sm:w-80 sm:h-[380px] liquid-morph-bubble p-2 bg-white overflow-hidden border-4 border-white shadow-2xl">
+                <img 
+                  id="hero-baby-photo" 
+                  src="/brunch/images/hero-group.jpg" 
+                  alt="Nuestra Gran Familia - Fundación En la Casa de Papá" 
+                  class="w-full h-full object-cover object-top scale-102 group-hover:scale-106 transition-transform duration-700"
+                />
+              </div>
+
+              <div class="absolute -bottom-3 left-1/2 -translate-x-1/2 bg-emerald-700 text-white font-display font-bold text-xs sm:text-sm px-5 py-1.5 rounded-full shadow-lg whitespace-nowrap">
+                ¡Gracias por sembrar amor! ❤️
+              </div>
+            </div>
+
+            <!-- Título Grande -->
+            <h1 class="hero-anim-item font-display font-extrabold text-3xl sm:text-5xl text-stone-900 tracking-tight leading-tight mb-2">
+              Brunch de <br class="sm:hidden" />
+              <span class="text-emerald-700 inline-block">Acción de Gracias</span>
+            </h1>
+
+            <p class="hero-anim-item font-sans text-stone-600 text-sm sm:text-base max-w-md mx-auto leading-relaxed mb-6">
+              Un encuentro cálido para agradecer tu fidelidad, celebrar juntos los frutos cosechados y compartir un delicioso desayuno.
+            </p>
+
+            <!-- Badge de Invitación Personalizada -->
+            <div id="hero-guest-badge" class="hero-anim-item w-full max-w-md mx-auto p-4 rounded-2xl glass-card-3d border border-sage-300 text-stone-700 text-sm shadow-md flex items-center justify-center gap-3 mb-6 bg-white/90">
+              <span class="text-2xl">🌿</span>
+              <div class="text-left">
+                <p id="hero-guest-name" class="font-bold text-emerald-800 text-base">¡Hola, Sembrador Feliz!</p>
+                <p id="hero-guest-passes" class="text-xs text-stone-600">Hemos reservado un lugar de honor para ti en este desayuno especial.</p>
+              </div>
+            </div>
+
+            <!-- Botones CTA rápidos -->
+            <div class="hero-anim-item flex flex-wrap items-center justify-center gap-3 w-full max-w-sm mb-6">
+              <a 
+                href="#rsvp-section" 
+                class="touch-btn flex-1 bg-emerald-700 hover:bg-emerald-800 text-white font-display font-bold text-sm py-3 px-4 rounded-xl shadow-md transition-all text-center cursor-pointer active:scale-95"
+              >
+                Confirmar Asistencia ✓
+              </a>
+              <a 
+                href="#details-section" 
+                class="touch-btn flex-1 bg-white hover:bg-stone-50 border border-stone-200 text-stone-700 font-semibold text-sm py-3 px-4 rounded-xl shadow-xs transition-all text-center cursor-pointer active:scale-95"
+              >
+                Ver Lugar & Hora 📍
+              </a>
+            </div>
+
+            <a href="#countdown-section" class="hero-anim-item inline-flex flex-col items-center text-xs font-semibold text-stone-500 hover:text-emerald-700 transition-colors pt-1">
+              <span>Desliza para descubrir más</span>
+              <svg class="w-5 h-5 mt-1 animate-bounce text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+              </svg>
+            </a>
+
+          </div>
+
+          <!-- CAPA 4 (Primer plano): Hojas decorativas en esquinas -->
+          <div class="parallax-layer absolute inset-0 pointer-events-none z-30 overflow-hidden" data-depth="0.9" style="filter: blur(2px);">
+            <div class="absolute -top-6 -left-6 w-32 h-32 text-emerald-600/40 rotate-45">
+              <svg viewBox="0 0 100 100" fill="currentColor">
+                <path d="M10,90 Q50,95 85,50 Q60,10 10,90 Z" />
+              </svg>
+            </div>
+            <div class="absolute bottom-10 -right-8 w-36 h-36 text-amber-500/35 -rotate-12">
+              <svg viewBox="0 0 100 100" fill="currentColor">
+                <path d="M90,90 Q40,95 15,50 Q40,10 90,90 Z" />
+              </svg>
+            </div>
+          </div>
+
+        </div>
+
+      </section>
+
+      <!-- ==================================================================
+           3. CUENTA REGRESIVA
+           ================================================================== -->
+      <section id="countdown-section" class="relative py-20 px-4 bg-gingham-sage border-y border-sage-200 overflow-hidden">
+        <div class="max-w-4xl mx-auto text-center relative z-20">
+          
+          <div class="inline-block px-4 py-1.5 bg-white/95 border border-sage-300 rounded-full text-sage-800 text-xs sm:text-sm font-bold uppercase tracking-wider mb-3 shadow-sm">
+            ⏰ Guardar la Fecha
+          </div>
+
+          <h2 class="text-3xl sm:text-4xl font-display font-bold text-stone-800 mb-2">
+            Cuenta Regresiva para Nuestro Encuentro
+          </h2>
+          <p id="countdown-date-label" class="text-stone-600 text-sm sm:text-base mb-10 max-w-md mx-auto">
+            Sábado 05 de Diciembre de 2026 • 7:30 AM
+          </p>
+
+          <!-- Tarjetas del Contador -->
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-6 max-w-2xl mx-auto perspective-1000">
+            
+            <div class="countdown-card glass-card-3d p-5 sm:p-6 rounded-3xl border-2 border-white shadow-xl flex flex-col items-center justify-center">
+              <span id="timer-days" class="timer-digit font-display font-extrabold text-4xl sm:text-5xl text-emerald-700 leading-none">00</span>
+              <span class="text-xs sm:text-sm font-semibold uppercase tracking-wider text-stone-500 mt-2">Días</span>
+            </div>
+
+            <div class="countdown-card glass-card-3d p-5 sm:p-6 rounded-3xl border-2 border-white shadow-xl flex flex-col items-center justify-center">
+              <span id="timer-hours" class="timer-digit font-display font-extrabold text-4xl sm:text-5xl text-amber-600 leading-none">00</span>
+              <span class="text-xs sm:text-sm font-semibold uppercase tracking-wider text-stone-500 mt-2">Horas</span>
+            </div>
+
+            <div class="countdown-card glass-card-3d p-5 sm:p-6 rounded-3xl border-2 border-white shadow-xl flex flex-col items-center justify-center">
+              <span id="timer-minutes" class="timer-digit font-display font-extrabold text-4xl sm:text-5xl text-emerald-800 leading-none">00</span>
+              <span class="text-xs sm:text-sm font-semibold uppercase tracking-wider text-stone-500 mt-2">Minutos</span>
+            </div>
+
+            <div class="countdown-card glass-card-3d p-5 sm:p-6 rounded-3xl border-2 border-white shadow-xl flex flex-col items-center justify-center">
+              <span id="timer-seconds" class="timer-digit font-display font-extrabold text-4xl sm:text-5xl text-amber-700 leading-none">00</span>
+              <span class="text-xs sm:text-sm font-semibold uppercase tracking-wider text-stone-500 mt-2">Segundos</span>
+            </div>
+
+          </div>
+
+          <div class="mt-8 text-stone-600 text-sm italic font-sans flex items-center justify-center gap-2">
+            <span>✨ Cada día que pasa nos acerca a una mañana memorable de gratitud ✨</span>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ==================================================================
+           4. EL CAMINO DEL IMPACTO: "EL FRUTO DE TU SIEMBRA"
+           ================================================================== -->
+      <section id="bebe-metro-section" class="relative py-24 px-4 bg-[#FDFBF7] overflow-hidden">
+        <div class="max-w-4xl mx-auto text-center relative z-20 mb-12">
+          <div class="inline-block px-4 py-1.5 bg-emerald-100 border border-emerald-300 rounded-full text-emerald-800 text-xs sm:text-sm font-bold uppercase tracking-wider mb-3 shadow-sm">
+            🌱 Nuestra Misión
+          </div>
+          <h2 class="text-3xl sm:text-4xl md:text-5xl font-display font-bold text-stone-800 mb-3">
+            El Fruto de Tu Siembra
+          </h2>
+          <p class="text-stone-600 text-sm sm:text-base max-w-md mx-auto">
+            A medida que bajas, descubre cómo tu generosidad se convierte en sonrisas, salud y esperanza para nuestros niños.
+          </p>
+        </div>
+
+        <!-- Contenedor del Caminito con el SVG vertical y los hitos cayendo -->
+        <div class="relative max-w-3xl mx-auto min-h-[900px] flex justify-center">
+          
+          <!-- SVG Path Trail vertical que se dibuja en tiempo real -->
+          <svg class="absolute top-0 bottom-0 w-full h-full pointer-events-none z-10" viewBox="0 0 600 900" preserveAspectRatio="none">
+            <path id="trail-bg" class="trail-path-bg" d="M300,10 C150,150 450,300 300,450 C150,600 450,750 300,890" />
+            <path id="trail-active" class="trail-path-active" d="M300,10 C150,150 450,300 300,450 C150,600 450,750 300,890" />
+            
+            <g id="trail-cursor" transform="translate(300, 10)">
+              <circle cx="0" cy="0" r="16" fill="#FEF3C7" stroke="#F59E0B" stroke-width="3" filter="drop-shadow(0 4px 6px rgba(0,0,0,0.15))"/>
+              <text x="0" y="5" font-size="14" text-anchor="middle">🌱</text>
+            </g>
+          </svg>
+
+          <!-- Hitos que caen con física -->
+          <div class="relative z-20 w-full flex flex-col justify-between py-12 space-y-36">
+            
+            <!-- Hito 1: Nutrición con Amor -->
+            <div class="milestone-item flex justify-start sm:ml-12" data-threshold="0.15">
+              <div class="milestone-card polaroid-3d max-w-[260px] sm:max-w-[280px]">
+                <div class="wooden-pin-3d"></div>
+                <div class="polaroid-img-box mb-2">
+                  <img src="/brunch/images/foto-nutricion-nina.jpg" alt="Nutrición con amor" class="w-full h-full object-cover object-top">
+                </div>
+                <p class="font-handwriting font-bold text-stone-800 text-lg text-center leading-tight">
+                  Nutrición con Amor 🍔🍓
+                </p>
+                <p class="text-[11px] text-stone-500 text-center font-sans mt-0.5">Alimentación y refrigerios balanceados</p>
+              </div>
+            </div>
+
+            <!-- Hito 2: Salud y Bienestar -->
+            <div class="milestone-item flex justify-end sm:mr-12" data-threshold="0.5">
+              <div class="milestone-card polaroid-3d max-w-[260px] sm:max-w-[280px]">
+                <div class="wooden-pin-3d"></div>
+                <div class="polaroid-img-box mb-2">
+                  <img src="/brunch/images/foto-salud.jpg" alt="Salud y bienestar integral" class="w-full h-full object-cover object-top">
+                </div>
+                <p class="font-handwriting font-bold text-stone-800 text-lg text-center leading-tight">
+                  Salud Oral y Cuidado 🪥🦷
+                </p>
+                <p class="text-[11px] text-stone-500 text-center font-sans mt-0.5">Jornadas de higiene y prevención</p>
+              </div>
+            </div>
+
+            <!-- Hito 3: Celebrando la Vida y Gran Familia -->
+            <div class="milestone-item flex justify-start sm:ml-12" data-threshold="0.85">
+              <div class="milestone-card polaroid-3d max-w-[260px] sm:max-w-[280px]">
+                <div class="wooden-pin-3d"></div>
+                <div class="polaroid-img-box mb-2">
+                  <img src="/brunch/images/foto-celebracion.jpg" alt="Celebrando la vida" class="w-full h-full object-cover object-top">
+                </div>
+                <p class="font-handwriting font-bold text-stone-800 text-lg text-center leading-tight">
+                  Celebrando la Vida 🎂✨
+                </p>
+                <p class="text-[11px] text-stone-500 text-center font-sans mt-0.5">Momentos felices que marcan sus corazones</p>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ==================================================================
+           5. GALERÍA PINNED HORIZONTAL
+           ================================================================== -->
+      <section id="gallery-pinned-section" class="relative h-screen bg-[#FDFBF7] overflow-hidden flex flex-col justify-center">
+        
+        <div class="px-6 max-w-4xl mx-auto text-center mb-8 z-20">
+          <div class="inline-block px-4 py-1.5 bg-amber-100 border border-amber-300 rounded-full text-amber-800 text-xs sm:text-sm font-bold uppercase tracking-wider mb-2 shadow-sm">
+            📸 Momentos de Gratitud
+          </div>
+          <h2 class="text-3xl sm:text-4xl md:text-5xl font-display font-bold text-stone-800 mb-1">
+            Sonrisas que Has Sembrado
+          </h2>
+          <p class="text-stone-600 text-xs sm:text-sm">
+            Desliza para ver la galería de momentos reales con nuestros niños. Toca cualquiera para ampliarla.
+          </p>
+        </div>
+
+        <div class="relative w-full overflow-hidden py-12">
+          <div class="clothesline-wire"></div>
+          <div id="horizontal-track" class="flex items-center gap-8 sm:gap-12 pl-8 pr-32">
+            <!-- Inyectado dinámicamente desde main.js con EVENT_CONFIG.gallery -->
+          </div>
+        </div>
+
+        <div class="text-center text-xs text-stone-400 font-sans mt-4">
+          ↔️ Desliza hacia abajo para recorrer la galería horizontalmente
+        </div>
+
+      </section>
+
+      <!-- ==================================================================
+           6. DETALLES DEL BRUNCH: CARDS STACK CON TILT 3D
+           ================================================================== -->
+      <section id="details-section" class="relative py-24 px-4 bg-gingham-terracotta border-t border-amber-100 overflow-hidden">
+        
+        <div class="max-w-4xl mx-auto text-center relative z-20 mb-14">
+          <div class="inline-block px-4 py-1.5 bg-white/95 border border-emerald-200 rounded-full text-emerald-800 text-xs sm:text-sm font-bold uppercase tracking-wider mb-3 shadow-sm">
+            🥐 Información del Encuentro
+          </div>
+          <h2 class="text-3xl sm:text-4xl md:text-5xl font-display font-bold text-stone-800 mb-3">
+            Detalles del Brunch
+          </h2>
+          <p class="text-stone-600 text-sm sm:text-base max-w-md mx-auto">
+            Todo lo que necesitas saber para acompañarnos en esta mañana especial de gratitud.
+          </p>
+        </div>
+
+        <!-- CONTENEDOR DE APILAMIENTO STICKY (CARDS STACK) -->
+        <div id="logistics-stack" class="max-w-2xl mx-auto relative perspective-1000 space-y-10">
+          
+          <!-- TARJETA 1: CUÁNDO Y HORA -->
+          <div class="sticky-stack-card glass-card-3d p-7 sm:p-9 rounded-3xl border-2 border-white shadow-2xl transition-all" data-card-index="0">
+            <div class="flex items-start justify-between mb-4">
+              <div class="w-16 h-16 rounded-2xl bg-amber-100 text-amber-700 flex items-center justify-center text-3xl shadow-inner">
+                <svg class="w-8 h-8 animate-spin-very-slow text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <circle cx="12" cy="12" r="10" stroke-width="2"></circle>
+                  <polyline points="12 6 12 12 16 14" stroke-width="2" stroke-linecap="round"></polyline>
+                </svg>
+              </div>
+              <span class="px-3 py-1 bg-amber-50 text-amber-800 text-xs font-bold rounded-full uppercase">Puntualidad</span>
+            </div>
+            
+            <h3 class="font-display font-bold text-2xl text-stone-800 mb-1">Cuándo & Horario</h3>
+            <p id="card-date-text" class="text-stone-800 font-semibold text-lg mb-1">Sábado 05 de Diciembre de 2026</p>
+            <p id="card-time-text" class="text-stone-500 text-sm mb-4">7:30 AM a 10:30 AM</p>
+            <p class="text-stone-600 text-sm leading-relaxed mb-6">
+              Te esperamos a las 7:30 AM para comenzar compartiendo un delicioso café, desayuno y un tiempo muy emotivo de agradecimiento.
+            </p>
+
+            <a 
+              id="btn-calendar" 
+              href="#" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              class="touch-btn w-full bg-emerald-700 hover:bg-emerald-800 text-white rounded-xl text-sm font-semibold py-3.5 px-4 shadow-md flex items-center justify-center gap-2 transition-all active:scale-98"
+            >
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+              </svg>
+              <span>Agendar en Google Calendar</span>
+            </a>
+          </div>
+
+          <!-- TARJETA 2: DÓNDE SERÁ EL BRUNCH -->
+          <div class="sticky-stack-card glass-card-3d p-7 sm:p-9 rounded-3xl border-2 border-white shadow-2xl transition-all" data-card-index="1">
+            <div class="flex items-start justify-between mb-4">
+              <div class="w-16 h-16 rounded-2xl bg-emerald-100 text-emerald-700 flex items-center justify-center text-3xl shadow-inner">
+                <svg class="w-8 h-8 animate-bounce text-emerald-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                </svg>
+              </div>
+              <span class="px-3 py-1 bg-emerald-50 text-emerald-800 text-xs font-bold rounded-full uppercase">Ubicación</span>
+            </div>
+
+            <h3 class="font-display font-bold text-2xl text-stone-800 mb-1">Dónde será el Brunch</h3>
+            <p id="card-location-name" class="text-stone-800 font-semibold text-lg mb-1">Restaurante Café Lagar Bistro</p>
+            <p id="card-location-details" class="text-stone-500 text-sm mb-4">Cra 31 # 38 - 109, Centro • Villavicencio, Meta</p>
+            <p class="text-stone-600 text-sm leading-relaxed mb-6">
+              Un lugar acogedor y exclusivo en el centro de la ciudad para compartir una mañana inolvidable.
+            </p>
+
+            <a 
+              id="btn-maps" 
+              href="#" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              class="touch-btn w-full bg-emerald-700 hover:bg-emerald-800 text-white rounded-xl text-sm font-semibold py-3.5 px-4 shadow-md flex items-center justify-center gap-2 transition-all active:scale-98"
+            >
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"></path>
+              </svg>
+              <span>Abrir en Google Maps / Waze</span>
+            </a>
+          </div>
+
+          <!-- TARJETA 3: DRESS CODE & GRATITUD -->
+          <div class="sticky-stack-card glass-card-3d p-7 sm:p-9 rounded-3xl border-2 border-white shadow-2xl transition-all" data-card-index="2">
+            <div class="flex items-start justify-between mb-4">
+              <div class="w-16 h-16 rounded-2xl bg-amber-100 text-amber-700 flex items-center justify-center text-3xl shadow-inner">
+                ✨
+              </div>
+              <span class="px-3 py-1 bg-amber-50 text-amber-800 text-xs font-bold rounded-full uppercase">Sugerencia</span>
+            </div>
+
+            <h3 class="font-display font-bold text-2xl text-stone-800 mb-1">Dress Code & Gratitud</h3>
+            <p id="card-dress-title" class="text-stone-800 font-semibold text-lg mb-1">Casual Elegante</p>
+            <p id="card-dress-desc" class="text-stone-500 text-sm mb-4">Te sugerimos vestir prendas cómodas en tonos claros, blanco, beige o verde oliva.</p>
+
+            <div class="flex items-center gap-2.5 mb-5">
+              <span class="text-xs text-stone-500 font-medium">Paleta sugerida:</span>
+              <span class="w-6 h-6 rounded-full bg-[#537B5B] border-2 border-white shadow-sm" title="Verde Oliva / Sage"></span>
+              <span class="w-6 h-6 rounded-full bg-[#E9A643] border-2 border-white shadow-sm" title="Dorado Cálido"></span>
+              <span class="w-6 h-6 rounded-full bg-[#F5EFE6] border-2 border-stone-200 shadow-sm" title="Beige / Crema"></span>
+              <span class="w-6 h-6 rounded-full bg-[#FFFFFF] border-2 border-stone-200 shadow-sm" title="Blanco Puro"></span>
+            </div>
+
+            <div class="p-4 bg-white/85 rounded-2xl border border-stone-200/70 text-xs text-stone-700 leading-relaxed mb-6 space-y-2">
+              <div>🌿 <strong class="text-stone-800">Mensaje de Bendición:</strong> «Cada semilla de amor que siembras florece en sonrisas y transforma vidas».</div>
+              <div>❤️ <strong class="text-stone-800">Homenaje a Ti:</strong> Tu presencia y fidelidad son el corazón de este encuentro.</div>
+            </div>
+
+            <a 
+              href="#rsvp-section" 
+              class="touch-btn w-full bg-amber-500 hover:bg-amber-600 text-stone-900 rounded-xl text-sm font-semibold py-3.5 px-4 shadow-md flex items-center justify-center gap-2 transition-all active:scale-98"
+            >
+              <span>Confirmar Asistencia abajo</span>
+              <span>👇</span>
+            </a>
+          </div>
+
+        </div>
+
+      </section>
+
+      <!-- ==================================================================
+           7. RSVP PERSONALIZADO CON CONFIRMACIÓN A WHATSAPP
+           ================================================================== -->
+      <section id="rsvp-section" class="relative py-24 px-4 bg-[#FDFBF7] overflow-hidden">
+        
+        <div class="max-w-xl mx-auto relative z-20">
+          
+          <div class="text-center mb-8">
+            <div class="inline-block px-4 py-1.5 bg-emerald-100 border border-emerald-300 rounded-full text-emerald-800 text-xs sm:text-sm font-bold uppercase tracking-wider mb-3 shadow-sm">
+              💌 Confirmación de Asistencia
+            </div>
+            <h2 class="text-3xl sm:text-4xl font-display font-bold text-stone-800 mb-2">
+              ¿Nos acompañas en el Brunch?
+            </h2>
+            <p class="text-stone-600 text-sm sm:text-base">
+              Por favor confírmanos antes del evento para organizar tu lugar de honor en nuestra mesa.
+            </p>
+          </div>
+
+          <div class="bg-white rounded-3xl p-6 sm:p-9 border border-stone-200/80 shadow-2xl relative">
+            
+            <div id="rsvp-guest-banner" class="mb-6 p-4 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-950 text-sm">
+              <div class="flex items-center gap-2 font-bold mb-1">
+                <span class="text-lg">🌿</span>
+                <span id="rsvp-guest-name-badge">¡Hola, Sembrador Feliz!</span>
+              </div>
+              <p id="rsvp-guest-greeting" class="text-xs text-emerald-800 leading-relaxed mb-2">
+                ¡Nos honra profundamente contar con tu presencia en este Brunch de Acción de Gracias!
+              </p>
+              <div class="inline-block px-2.5 py-1 bg-white rounded-lg border border-emerald-200 text-xs font-semibold text-emerald-800">
+                🎫 <span id="rsvp-passes-count">Lugar reservado con honor</span>
+              </div>
+            </div>
+
+            <form id="rsvp-form" class="space-y-5" onsubmit="return false;">
+              
+              <div>
+                <label for="rsvp-name" class="block text-xs font-bold text-stone-700 uppercase tracking-wider mb-2">
+                  Nombre de Asistente o Invitado *
+                </label>
+                <input 
+                  type="text" 
+                  id="rsvp-name" 
+                  required
+                  placeholder="Tu nombre completo" 
+                  class="w-full px-4 py-3.5 rounded-xl border border-stone-300 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-stone-800 text-sm transition-all"
+                />
+              </div>
+
+              <div>
+                <label for="rsvp-status" class="block text-xs font-bold text-stone-700 uppercase tracking-wider mb-2">
+                  ¿Asistirás al Brunch? *
+                </label>
+                <select 
+                  id="rsvp-status" 
+                  class="w-full px-4 py-3.5 rounded-xl border border-stone-300 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-stone-800 text-sm bg-white transition-all cursor-pointer"
+                >
+                  <option value="yes" selected>¡Sí, asistiré con mucha alegría! 🎉</option>
+                  <option value="no">Lamentablemente no podré asistir 🥺</option>
+                </select>
+              </div>
+
+              <div id="rsvp-count-container">
+                <label for="rsvp-attendees" class="block text-xs font-bold text-stone-700 uppercase tracking-wider mb-2">
+                  Número de Asistentes Confirmados
+                </label>
+                <select 
+                  id="rsvp-attendees" 
+                  class="w-full px-4 py-3.5 rounded-xl border border-stone-300 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-stone-800 text-sm bg-white transition-all cursor-pointer"
+                >
+                  <option value="1">1 persona</option>
+                  <option value="2">2 personas</option>
+                </select>
+                <p class="text-[11px] text-stone-400 mt-1.5">
+                  Restringido según los cupos reservados para tu invitación.
+                </p>
+              </div>
+
+              <div>
+                <label for="rsvp-message" class="block text-xs font-bold text-stone-700 uppercase tracking-wider mb-2">
+                  Mensaje para la Fundación (opcional)
+                </label>
+                <textarea 
+                  id="rsvp-message" 
+                  rows="3" 
+                  placeholder="Escribe una palabra de bendición o alguna nota para nuestro encuentro..." 
+                  class="w-full px-4 py-3 rounded-xl border border-stone-300 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-stone-800 text-sm transition-all resize-none"
+                ></textarea>
+              </div>
+
+              <button 
+                type="button" 
+                id="btn-submit-rsvp" 
+                class="touch-btn relative w-full bg-gradient-to-r from-emerald-700 to-emerald-900 hover:from-emerald-800 hover:to-emerald-950 text-white font-display font-bold text-base py-4 px-6 rounded-2xl shadow-xl shadow-emerald-900/20 transition-all flex items-center justify-center gap-2 overflow-hidden cursor-pointer active:scale-98"
+              >
+                <span id="btn-submit-content" class="flex items-center gap-2">
+                  <span>Confirmar Asistencia por WhatsApp</span>
+                  <span class="text-xl">💬</span>
+                </span>
+                <svg id="btn-submit-check" class="absolute w-8 h-8 text-white opacity-0" viewBox="0 0 50 50">
+                  <circle cx="25" cy="25" r="22" stroke="white" stroke-width="3" stroke-linecap="round" fill="none" />
+                  <path d="M15 26 L22 33 L35 18" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+                </svg>
+              </button>
+
+            </form>
+
+            <p class="text-center text-xs text-stone-400 mt-4 font-sans">
+              🔒 Al confirmar se abrirá WhatsApp con tu mensaje listo para enviar.
+            </p>
+
+          </div>
+
+        </div>
+
+      </section>
+
+      <!-- Pie de página con Logo y Agradecimiento -->
+      <footer class="py-12 px-4 bg-stone-900 text-stone-400 text-center text-xs border-t border-stone-800">
+        <div class="max-w-md mx-auto space-y-3">
+          <img src="/brunch/images/logo.png" alt="Fundación En la Casa de Papá" class="h-14 mx-auto brightness-200 filter mb-2" />
+          <p class="text-stone-300 font-display font-semibold text-sm">
+            Fundación En la Casa de Papá
+          </p>
+          <p class="text-[11px] text-stone-400 leading-relaxed">
+            «Sembrando amor, esperanza y futuro en cada niño».<br />
+            Brunch de Acción de Gracias • Sábado 05 de Diciembre de 2026
+          </p>
+          <p class="text-[10px] text-stone-600 pt-4">
+            Villavicencio, Meta • Restaurante Café Lagar Bistro
+          </p>
+        </div>
+      </footer>
+
+    </main>
+
+    <!-- ====================================================================
+         8. MODAL LIGHTBOX PARA LAS FOTOS
+         ==================================================================== -->
+    <div 
+      id="lightbox-modal" 
+      class="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity duration-300"
+      role="dialog"
+      aria-modal="true"
+    >
+      <button 
+        id="lightbox-close" 
+        class="touch-btn absolute top-5 right-5 text-white/80 hover:text-white bg-white/10 rounded-full w-12 h-12 flex items-center justify-center text-2xl transition-all"
+        aria-label="Cerrar foto"
+      >
+        ✕
+      </button>
+
+      <button 
+        id="lightbox-prev" 
+        class="touch-btn absolute left-4 top-1/2 -translate-y-1/2 text-white/80 hover:text-white bg-white/10 rounded-full w-12 h-12 flex items-center justify-center text-2xl transition-all hidden sm:flex"
+        aria-label="Foto anterior"
+      >
+        ‹
+      </button>
+
+      <button 
+        id="lightbox-next" 
+        class="touch-btn absolute right-4 top-1/2 -translate-y-1/2 text-white/80 hover:text-white bg-white/10 rounded-full w-12 h-12 flex items-center justify-center text-2xl transition-all hidden sm:flex"
+        aria-label="Foto siguiente"
+      >
+        ›
+      </button>
+
+      <div id="lightbox-card" class="relative max-w-lg w-full bg-white rounded-3xl p-4 shadow-2xl transition-transform duration-300 scale-95 flex flex-col items-center">
+        <div class="w-full max-h-[65vh] rounded-2xl overflow-hidden bg-stone-100 flex items-center justify-center mb-3">
+          <img 
+            id="lightbox-img" 
+            src="" 
+            alt="Foto de la Fundación" 
+            class="w-full h-full max-h-[65vh] object-contain"
+          />
+        </div>
+        <h4 id="lightbox-caption" class="font-display font-bold text-stone-800 text-lg sm:text-xl text-center">
+          Título de la Foto
+        </h4>
+        <p id="lightbox-subtitle" class="font-sans text-stone-600 text-xs sm:text-sm text-center mt-1">
+          Descripción del momento
+        </p>
+      </div>
+    </div>
+
+    <!-- ====================================================================
+         9. PANEL ADMINISTRATIVO (?admin=true)
+         ==================================================================== -->
+    <div 
+      id="admin-modal" 
+      class="fixed inset-0 z-[100] bg-black/60 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 opacity-0 pointer-events-none transition-opacity duration-300"
+      role="dialog"
+      data-lenis-prevent
+    >
+      <div class="bg-white rounded-3xl max-w-2xl w-full max-h-[88vh] flex flex-col shadow-2xl border border-stone-200 overflow-hidden" data-lenis-prevent>
+        <div class="p-5 sm:p-6 bg-emerald-50 border-b border-emerald-200 flex items-center justify-between flex-shrink-0">
+          <div>
+            <div class="inline-block px-2.5 py-0.5 rounded-full bg-emerald-200 text-emerald-900 text-xs font-bold uppercase mb-1">
+              Panel Administrativo
+            </div>
+            <h3 class="font-display font-bold text-xl text-stone-800">
+              Gestor de Sembradores Felices y Enlaces
+            </h3>
+            <p class="text-xs text-stone-600">
+              Agrega personas, edita cupos y copia o envía los links personalizados por WhatsApp.
+            </p>
+          </div>
+          <button 
+            id="admin-close" 
+            class="touch-btn text-stone-500 hover:text-stone-800 bg-white rounded-full w-10 h-10 border border-stone-200 flex items-center justify-center shadow-sm"
+          >
+            ✕
+          </button>
+        </div>
+
+        <!-- BARRA DE BÚSQUEDA Y BOTÓN AGREGAR -->
+        <div class="px-4 sm:px-6 py-3 bg-stone-50 border-b border-stone-200 flex flex-wrap items-center justify-between gap-2.5 flex-shrink-0">
+          <div class="relative flex-1 min-w-[180px]">
+            <span class="absolute left-3 top-2.5 text-stone-400 text-xs">🔍</span>
+            <input 
+              type="text" 
+              id="admin-search-input" 
+              placeholder="Buscar por nombre..." 
+              class="w-full pl-8 pr-3 py-1.5 text-xs rounded-xl bg-white border border-stone-200 focus:outline-none focus:border-emerald-500 text-stone-800 shadow-sm"
+            />
+          </div>
+
+          <div class="flex items-center gap-2">
+            <span id="admin-guest-count-badge" class="px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-900 text-xs font-bold">
+              33 sembradores
+            </span>
+            <button 
+              id="admin-btn-toggle-add" 
+              type="button" 
+              class="touch-btn bg-emerald-700 hover:bg-emerald-800 active:scale-95 text-white text-xs font-bold py-1.5 px-3.5 rounded-xl transition-all flex items-center gap-1.5 shadow-sm cursor-pointer"
+            >
+              <span>➕</span> <span>Agregar Sembrador</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- FORMULARIO DESPLEGABLE PARA AGREGAR NUEVO INVITADO -->
+        <div id="admin-add-guest-form" class="hidden p-4 sm:p-5 bg-emerald-50/90 border-b border-emerald-200 flex-shrink-0">
+          <div class="flex items-center justify-between mb-2.5">
+            <h4 class="font-display font-bold text-sm text-emerald-950 flex items-center gap-1.5">
+              <span>🌿</span> <span>Nuevo Sembrador Feliz</span>
+            </h4>
+            <button id="admin-btn-cancel-add" type="button" class="text-xs text-stone-500 hover:text-stone-800 px-2 py-0.5 rounded-md hover:bg-stone-200/60 cursor-pointer">
+              ✕ Cancelar
+            </button>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+            <div class="sm:col-span-2">
+              <label class="block text-[11px] font-semibold text-stone-700 mb-1">Nombre o Familia:</label>
+              <input type="text" id="add-guest-name" placeholder="Ej: Carlos Gómez o Familia Martínez" class="w-full text-xs p-2 rounded-xl bg-white border border-stone-300 focus:outline-none focus:border-emerald-500" />
+            </div>
+            <div>
+              <label class="block text-[11px] font-semibold text-stone-700 mb-1">Cupos reservados:</label>
+              <select id="add-guest-passes" class="w-full text-xs p-2 rounded-xl bg-white border border-stone-300 focus:outline-none focus:border-emerald-500">
+                <option value="1">1 cupo (1 persona)</option>
+                <option value="2" selected>2 cupos (2 personas)</option>
+                <option value="3">3 cupos (3 personas)</option>
+                <option value="4">4 cupos (4 personas)</option>
+              </select>
+            </div>
+            <div class="sm:col-span-3">
+              <label class="block text-[11px] font-semibold text-stone-700 mb-1">Saludo personalizado de gratitud (opcional):</label>
+              <input type="text" id="add-guest-greeting" placeholder="¡Nos honra profundamente contar con tu presencia en nuestro Brunch de Acción de Gracias!" class="w-full text-xs p-2 rounded-xl bg-white border border-stone-300 focus:outline-none focus:border-emerald-500" />
+            </div>
+          </div>
+          <div class="mt-3 flex justify-end gap-2">
+            <button id="admin-btn-save-new" type="button" class="touch-btn bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-bold py-2 px-4 rounded-xl shadow-sm transition-all cursor-pointer active:scale-95">
+              Guardar y Crear Enlace
+            </button>
+          </div>
+        </div>
+
+        <div 
+          id="admin-guest-list" 
+          class="p-4 sm:p-6 overflow-y-auto overscroll-contain flex-1 divide-y divide-stone-100" 
+          data-lenis-prevent
+          style="-webkit-overflow-scrolling: touch; touch-action: pan-y; overscroll-behavior: contain;"
+        >
+        </div>
+
+        <div class="p-3.5 bg-stone-50 border-t border-stone-200 flex flex-wrap items-center justify-between gap-2 text-xs text-stone-500 flex-shrink-0">
+          <span id="admin-footer-summary" class="text-[11px] font-medium text-stone-600">
+            🌿 33 sembradores registrados
+          </span>
+          <div class="flex items-center gap-2">
+            <button id="admin-btn-copy-json" type="button" class="touch-btn text-[11px] font-semibold text-stone-600 hover:text-stone-900 bg-white hover:bg-stone-100 border border-stone-200 px-2.5 py-1 rounded-lg transition-all shadow-xs cursor-pointer">
+              📋 Copiar lista en JSON
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Script Principal -->
+  </body>
+</html>
